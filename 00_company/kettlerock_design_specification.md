@@ -1,6 +1,6 @@
 # Kettlerock Value Stores: Design Specification
 
-**Author:** Fatiha Abisola Okesola · **Version:** 2.7 · **Last updated:** 2026-11-11
+**Author:** Fatiha Abisola Okesola · **Version:** 2.8 · **Last updated:** 2026-11-12
 
 > A fictional Canadian value retailer, generated from synthetic data calibrated to public retail benchmarks and the M5 dataset, for one FY2028 planning season told in seven chapters across FP&A and strategic finance.
 
@@ -97,7 +97,7 @@ A mature standard store sells about $2.95M a year at about a 19% store contribut
 | Items per basket | ≈ 4.3 (average unit price ≈ $2.67) | D |
 | Transactions per day (mature standard store) | ≈ 705 ($2.95M ÷ 364 days ÷ $11.50) | D |
 | Gross margin | ≈ 41% of net sales | B (range) |
-| Store labour | ≈ 10.5% of sales (≈ 300 hours/week at a loaded wage) | A; wage paths O |
+| Store labour | ≈ 10.5% of sales (≈ 280 hours/week at maturity: fixed coverage of 2 staff × 70 open hours, plus ≈ 0.028 hours per transaction, at a loaded wage) | A; wage paths O |
 | Occupancy (rent, shared mall costs, property tax) | ≈ 8.5% of sales on average; rent per sq ft varies by market and is highest in the GTA | A |
 | Other store costs (utilities, repairs, supplies, card fees) | ≈ 3% of sales | A |
 | Store contribution (four-wall EBITDA) | ≈ 19% of sales at maturity (41 − 10.5 − 8.5 − 3); lower while stores ramp | D |
@@ -482,13 +482,13 @@ The generator runs traffic first and rolls everything up from it, then builds ea
 
 1. **Structure:** calendar, holidays, markets, stores and opening timeline, products, cost history, accounts, debt facilities.
 2. **World:** load structural parameters; draw seeded parameters and hidden events; seal them.
-3. **Traffic:** integer daily transactions per store = mature base × store level factor × ramp-up × day-of-week shape × seasonality × holiday effect (authored mapping) × trading status (0 on closed days; an authored share on reduced-hours days; an authored share of a closed day's demand recaptured on the neighbouring open days) × persistent drift × event effects × qualifying category-wide price effect × noise.
+3. **Traffic:** integer daily transactions per store = mature base × store level factor × ramp-up × day-of-week shape × seasonality × holiday effect (authored mapping) × trading status (0 on closed days; an authored share on reduced-hours days; an authored share of a closed day's demand recaptured on the neighbouring open days; on a day next to a closure, only the larger of the pre-holiday sales increment and the recaptured sales increment is applied) × persistent drift × event effects × qualifying category-wide price effect × noise.
 4. **Item demand:** baseline expected units per item per store-day, then each item's price-response multiplier (section 12).
 5. **Category units and sales:** sum expected item units by category, draw integer category units, derive category mix and items per basket, then gross sales, discounts, markdowns, returns and net sales.
 6. **Items:** weekly multinomial allocation of integer category-week units across items by price-adjusted expected units; seasonal items only in their window.
 7. **Cost of goods:** landed unit cost from `fact_cost_history` at the real exchange rate, supplier rebates, shrink, end-of-season write-downs.
 8. **Inventory and payables:** monthly receipts by the purchasing rule; inventory roll-forward at landed cost; payables by payment terms.
-9. **Store costs:** labour hours driven by transactions × provincial wage path; occupancy from leases; other costs including card fees.
+9. **Store costs:** labour hours = fixed coverage (2 staff × open hours) + hours per transaction × transactions, costed at the provincial wage path; occupancy from leases; other costs including card fees.
 10. **Company costs:** distribution (fixed + per unit), marketing, head office (fixed + inflation), pre-opening.
 11. **Capital and cash:** capex, depreciation, interest on the real base rate path, tax, cash flow, revolver, covenant.
 12. **Plan versions:** long-range plan, budgets and Q1–Q2 forecasts, each from its as-of information only (section 10).
@@ -534,7 +534,7 @@ M5 records unit sales, not transactions, so it informs only descriptive sales ac
 
 | Behaviour | Source | Used for |
 | --- | --- | --- |
-| Day-of-week sales pattern | M5 | Descriptive sales activity shape; applied to transactions through an authored relationship |
+| Day-of-week sales pattern | M5 | Unit-sales shape by day of week; applied to transactions through an authored neutral bridge (weekend basket multiplier 1.00 in the base world, tested in scenarios) |
 | Seasonality shape by category | M5 | Category seasonality |
 | Sales variation between stores | M5 | Store level factor range |
 | Week-to-week volatility and persistence | M5 | Drift and noise settings |
@@ -546,7 +546,26 @@ M5 records unit sales, not transactions, so it informs only descriptive sales ac
 | CAD/USD, base rate, CPI, minimum wages | Bank of Canada, Statistics Canada, provincial governments | Observed history (tag O) |
 | Price response | Authored range, not M5 | Ranges in `ref_assumptions`; drawn values sealed; tested in scenarios |
 
-**Output of Stage 1:** a parameter table (01\_calibration/calibrated\_parameters.csv) where each parameter has its value, source\_id, method and confidence; it feeds `sealed_world_parameters` and `ref_assumptions`. M5 is credited per its usage terms, and its raw data is never committed to the repository.
+**Output of Stage 1:** `01_calibration/calibrated_parameters.csv`, one row per generator driver. Every business assumption, behavioural parameter, cost rate, range and authored relationship the generator uses appears once in this table, and none exists only as a number in code; structural constants such as days in a week or months in a year stay in code. The table feeds `ref_assumptions` (the ranges visible in the story) and `sealed_world_parameters` (the exact values drawn). Sealed values never appear in this public file: a row points to its sealed draw by `sealed_parameter_id` only. M5 is credited per its usage terms, and its raw data is never committed to the repository.
+
+| Column | Content |
+| --- | --- |
+| parameter\_id, parameter\_name | Identifier and short name |
+| parameter\_group | Store economics, demand shape, variation, growth, pricing, working capital, calendar, macro, capital |
+| grain | Time grain (daily, weekly, monthly, annual), basis (units, transactions, sales dollars, cost), level (store, category, province, company) and, for a percentage, its denominator |
+| unit | Unit of the value |
+| central\_value, lower\_bound, upper\_bound | The calibrated or authored central value and its range |
+| distribution | How the value is drawn, for parameters drawn per seed |
+| source\_ids | One or more `source_id` values from the benchmark source register, or "authored" |
+| evidence\_tag | Lineage tag from section 16 (B, O, A, S, E, D, R) |
+| method | Taken directly, midpoint of a range, derived, or authored and checked against a range |
+| rationale | Why this value, and where it sits relative to the evidence |
+| evidence\_confidence | High, medium or low: how solid the evidence is |
+| modeling\_confidence | High, medium or low: how sure the Kettlerock value is right |
+| constraint | Parameters this one is tied to, and which of them is derived (for example sales = transactions × average ticket) |
+| downstream\_table | Table or generation step that reads it |
+| validation\_target | What the generated data is checked against |
+| sealed\_parameter\_id | Pointer to the sealed draw, where one exists |
 
 **Benchmark source register:** every external figure or series used for calibration (filings, M5 summary statistics, government series) is logged in `01_calibration/benchmark_sources.csv`, one row per extracted value, so "calibrated to public benchmarks" can be checked line by line.
 
