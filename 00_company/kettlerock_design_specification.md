@@ -1,6 +1,6 @@
 # Kettlerock Value Stores: Design Specification
 
-**Author:** Fatiha Abisola Okesola · **Version:** 2.8 · **Last updated:** 2026-11-12
+**Author:** Fatiha Abisola Okesola · **Version:** 2.9 · **Last updated:** 2026-11-12
 
 > A fictional Canadian value retailer, generated from synthetic data calibrated to public retail benchmarks and the M5 dataset, for one FY2028 planning season told in seven chapters across FP&A and strategic finance.
 
@@ -105,7 +105,7 @@ A mature standard store sells about $2.95M a year at about a 19% store contribut
 | Opening inventory | ≈ $180K (working capital, not capex) | A |
 | Pre-opening costs | ≈ $40K, expensed | A |
 | Payback hurdle | ≤ 3 years on store contribution | A |
-| Remodel | ≈ $250K, about 3 per year; sales lift is an authored range | A |
+| Remodel | ≈ $250K, about 3 per year; transaction lift of 5% (sealed draw, 2–8%), steady-state, one active lift per store | A |
 
 ### Company
 
