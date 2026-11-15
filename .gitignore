@@ -225,3 +225,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+   # Engine outputs stay local
+   02_engine/output/
+   # Sealed files stay private until the season ends
+   sealed/
