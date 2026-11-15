@@ -84,7 +84,7 @@ CREATE TABLE dim_product (
     duty_tariff_rate NUMERIC(8,4),
     base_landed_cost_cad NUMERIC(12,4),
     product_margin_at_ticket NUMERIC(8,4),
-    seasonal_window NUMERIC,
+    seasonal_window TEXT,
     launch_date DATE,
     discontinue_date DATE,
     PRIMARY KEY (product_id)
@@ -115,7 +115,7 @@ DROP TABLE IF EXISTS dim_scenario CASCADE;
 CREATE TABLE dim_scenario (
     scenario_id TEXT,
     scenario_type TEXT,
-    case TEXT,
+    scenario_case TEXT,
     planning_cycle TEXT,
     as_of_date DATE,
     actuals_through DATE,
@@ -130,7 +130,7 @@ CREATE TABLE dim_debt_facility (
     facility_id TEXT,
     facility_name TEXT,
     original_amount NUMERIC(16,2),
-    "limit" NUMERIC(16,2),
+    facility_limit NUMERIC(16,2),
     annual_amortization_pct NUMERIC(8,4),
     spread_over_base_pp NUMERIC(8,4),
     covenant_max_leverage NUMERIC(8,4),
