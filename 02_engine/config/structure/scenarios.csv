@@ -1,4 +1,4 @@
-scenario_id,scenario_type,case,planning_cycle,as_of_date,actuals_through,version_status,assumption_set_id,prepared_by
+scenario_id,scenario_type,scenario_case,planning_cycle,as_of_date,actuals_through,version_status,assumption_set_id,prepared_by
 ACT,Actual,,,,2026-10-31,,,Generator
 LRP_2025,Long-range plan FY2026-FY2030,Base,LRP 2025,2025-03-31,2025-02-01,Approved,AS_LRP_2025,Generator
 BUD_FY2026,Budget,Base,FY2026 budget,2025-01-15,2024-11-02,Final,AS_BUD_FY2026,Generator
