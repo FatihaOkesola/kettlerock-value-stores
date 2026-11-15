@@ -275,7 +275,7 @@ Seven planning versions sit beside the actuals; the generator builds five, and t
 | FCST\_FY2027\_Q3 | Forecast (9 + 3) | Base | Nov 2026 | Q3 FY2027 | Analyst | Deliverable |
 | PLAN\_FY2028 | Plan | Base, Upside, Downside | Nov 2026 (draft started after the Q3 close) | Q3 FY2027, plus the Q3 forecast for Q4 | Analyst | Deliverable |
 
-**Version fields** (`dim_scenario`): `scenario_id`, `scenario_type`, `case`, `planning_cycle`, `as_of_date`, `actuals_through`, `version_status`, `assumption_set_id`, `prepared_by`.
+**Version fields** (`dim_scenario`): `scenario_id`, `scenario_type`, `scenario_case`, `planning_cycle`, `as_of_date`, `actuals_through`, `version_status`, `assumption_set_id`, `prepared_by`.
 
 Each version links to one assumption set in the registry (section 15), so every planned number traces to the assumptions behind it.
 
