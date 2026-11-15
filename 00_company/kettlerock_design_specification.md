@@ -1,6 +1,6 @@
 # Kettlerock Value Stores: Design Specification
 
-**Author:** Fatiha Abisola Okesola · **Version:** 2.9 · **Last updated:** 2026-11-12
+**Author:** Fatiha Abisola Okesola · **Version:** 3.1 · **Last updated:** 2026-11-14
 
 > A fictional Canadian value retailer, generated from synthetic data calibrated to public retail benchmarks and the M5 dataset, for one FY2028 planning season told in seven chapters across FP&A and strategic finance.
 
@@ -98,7 +98,7 @@ A mature standard store sells about $2.95M a year at about a 19% store contribut
 | Transactions per day (mature standard store) | ≈ 705 ($2.95M ÷ 364 days ÷ $11.50) | D |
 | Gross margin | ≈ 41% of net sales | B (range) |
 | Store labour | ≈ 10.5% of sales (≈ 280 hours/week at maturity: fixed coverage of 2 staff × 70 open hours, plus ≈ 0.028 hours per transaction, at a loaded wage) | A; wage paths O |
-| Occupancy (rent, shared mall costs, property tax) | ≈ 8.5% of sales on average; rent per sq ft varies by market and is highest in the GTA | A |
+| Occupancy (rent, shared mall costs, property tax) | ≈ 8.5% of sales on average; rent per selling sq ft is a regional rate multiplied by a location multiplier and is highest in the GTA | A |
 | Other store costs (utilities, repairs, supplies, card fees) | ≈ 3% of sales | A |
 | Store contribution (four-wall EBITDA) | ≈ 19% of sales at maturity (41 − 10.5 − 8.5 − 3); lower while stores ramp | D |
 | New store capex | ≈ $650K: leasehold improvements $350K, fixtures $230K, IT/POS $70K | A |
@@ -153,7 +153,7 @@ The long-range plan targets 60 stores by FY2030.
 
 **Markets:** each store belongs to one trade area (`market_id`) of 1–3 stores. Markets are the unit for local events: a competitor opening affects every store in the chosen market (section 14). Market assignment is authored once and fixed.
 
-The 40 stores form 21 markets: dense urban areas hold 2–3 stores per market, small towns are a market of one.
+The 40 stores form 21 markets (22 once Markham opens): dense urban areas hold 2–3 stores per market, small towns are a market of one.
 
 | Region | Stores | Markets | Stores per market |
 | --- | --- | --- | --- |
@@ -163,7 +163,7 @@ The 40 stores form 21 markets: dense urban areas hold 2–3 stores per market, s
 | Atlantic Canada | 5 | 4 | Halifax 2; three single-store towns |
 | Total | 40 | 21 |  |
 
-The two Ontario stores planned for Q4 FY2027 join existing GTA markets. Sales transfer between stores in the same market (cannibalization) is not modelled in the first release.
+Two Ontario stores are planned for Q4 FY2027. One joins GTA-5 in Vaughan; the second establishes the new GTA-6 market in Markham, so every market keeps one to three stores. Sales transfer between stores in the same market (cannibalization) is not modelled in the first release.
 
 **Comparable rule:** a store enters the comparable base after 13 full fiscal months; periods with a remodel closure over two weeks are excluded.
 
@@ -183,7 +183,7 @@ The weighted product margin is about 44%. Shrink (about 1.5% of net sales) and m
 
 **Seasonal windows:** seasonal items sell only inside their window. Unsold seasonal stock at the end of a window is marked down or written off.
 
-**Sourcing:** about half of cost of goods is imported, bought in US dollars and received through the distribution centre; the rest is domestic and bought in Canadian dollars. Imports convert at the real historical CAD/USD rate during the actual period. Tariffs and FX hedging are extensions.
+**Sourcing:** about half of cost of goods at landed cost is imported (45–52%, against Dollarama's 46–48% of purchase volume), bought in US dollars and received through the distribution centre; the rest is domestic and bought in Canadian dollars. Imports convert at the real historical CAD/USD rate during the actual period. Tariffs and FX hedging are extensions.
 
 ## 7. Fiscal calendar
 
@@ -396,6 +396,7 @@ Two stores of numbers are kept apart: what management believed when planning (vi
 
 - Visible structural parameters: ramp curve, price point list, cost structure, calendar, store attributes.
 - Sealed until analysis ends: the random draws for each seed, the price response values actually used, and the events log.
+- **Seed commitment:** the generator seed and the sealed file stay private during the season. At the start, a SHA-256 hash of the exact canonical bytes of each file (not of their parsed contents) is published in the README. After the analysis, both files are released, so anyone can recompute the hashes and regenerate the world.
 
 ## 16. Lineage and data dictionary
 
@@ -528,6 +529,12 @@ Every check must pass exactly (to the cent or unit) or the dataset is rejected.
 - Every column appears in `ref_data_dictionary` with a lineage tag.
 - Every assumption used by a version exists in `ref_assumptions` under its assumption set.
 
+**Published data:**
+
+- The manifest lists every canonical CSV with its SHA-256 hash and row count; regenerated files must match it byte for byte.
+- After loading into PostgreSQL, row counts and control totals (net sales, units, cost of goods, closing cash) equal the canonical CSVs.
+- Each published Parquet file is a derivative of its canonical CSV, not a second source of truth: it carries its own hash in the manifest and reproduces the CSV's row count and control totals.
+
 ## 21. Stage 1 calibration plan
 
 M5 records unit sales, not transactions, so it informs only descriptive sales activity, seasonality (including holiday-period seasonality), store variation, volatility and item concentration. It did not measure Canadian holidays. Transactions and average ticket are calibrated from public retailer ranges and authored relationships; official statistics supply macro history; everything causal, such as price response, is authored.
@@ -619,19 +626,32 @@ One repository holds the company, the engine and a folder per chapter of the pla
 
 ```
 kettlerock-value-stores/
-├── README.md                      (framing, disclosure, storyline, lineage summary)
-├── 00_company/                    (this specification)
-├── 01_calibration/                (Stage 1: how retail behaves)
-│   ├── benchmark_sources.csv      (one row per external figure or series; columns in section 21)
-│   └── calibrated_parameters.csv  (each parameter: value, source_id, method, confidence)
-├── 02_engine/                     (generator, checks, assumptions registry, data dictionary)
-├── 03_ch0_where_we_stand/         (FP&A)
-├── 04_ch1_price_points/           (strategic finance with merchandising)
-├── 05_ch2_store_portfolio/        (strategic finance with real estate)
-├── 06_ch3_working_capital/        (supply chain finance with treasury)
-├── 07_ch4_expansion_pace/         (strategic finance)
-├── 08_ch5_regional_growth/        (strategic finance with real estate and supply chain)
-└── 09_ch6_value_creation/         (strategic finance for the owner)
+├── README.md                          (framing, disclosure, storyline, seed commitment)
+├── 00_company/                        (this specification)
+├── 01_calibration/                    (Stage 1: how retail behaves)
+│   ├── benchmark_sources.csv          (one row per external figure or series; columns in section 21)
+│   ├── calibrated_parameters.csv      (one row per generator driver; columns in section 21)
+│   ├── calibrated_parameter_vectors.csv (multi-value parameters)
+│   └── m5_patterns.ipynb, outputs/, sources/
+├── 02_engine/                         (Stage 2: the generator)
+│   ├── pyproject.toml
+│   ├── src/kettlerock_engine/         (calendar, world, traffic, baskets, inventory, finance, plans, checks)
+│   ├── tests/                         (pytest)
+│   ├── notebooks/engine_walkthrough.ipynb
+│   ├── schemas/                       (PostgreSQL schema and COPY loader)
+│   ├── config/                        (points to 01_calibration; never copies it)
+│   └── data/                          (published Parquet files and manifest)
+├── 03_ch0_where_we_stand/             (FP&A)
+├── 04_ch1_price_points/               (strategic finance with merchandising)
+├── 05_ch2_store_portfolio/            (strategic finance with real estate)
+├── 06_ch3_working_capital/            (supply chain finance with treasury)
+├── 07_ch4_expansion_pace/             (strategic finance)
+├── 08_ch5_regional_growth/            (strategic finance with real estate and supply chain)
+└── 09_ch6_value_creation/             (strategic finance for the owner)
 ```
+
+**Data outputs.** The engine writes canonical CSV files and a manifest (file, SHA-256 hash, row count). PostgreSQL is loaded from those exact files with `COPY` and checked against them; it is a loaded copy, not a separate source. The visible tables are published in `02_engine/data/` as Parquet derivatives with their own manifest hashes, after their size is measured. The canonical CSVs and the `sealed/` folder (seed, sealed world parameters, events log) are kept out of the repository; the sealed files are released after the season (section 15).
+
+**Stable identifiers.** Store, product, category and fiscal-period identifiers are fixed in the structure step and never change between regenerations or depend on random draws. Event identifiers are stable for a given seed and live in the sealed log.
 
 Sealed outputs are stored outside the analysis folders until each analysis is finished.
