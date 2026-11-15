@@ -80,9 +80,9 @@ def build_dim_scenario(structure_dir: Path) -> pd.DataFrame:
 def build_dim_debt_facility(params: Params) -> pd.DataFrame:
     return pd.DataFrame([
         {"facility_id": "TERM", "facility_name": "Term loan", "original_amount": params.value("CAP-01"),
-         "limit": "", "annual_amortization_pct": params.value("CAP-02"), "spread_over_base_pp": params.value("CAP-04"),
+         "facility_limit": "", "annual_amortization_pct": params.value("CAP-02"), "spread_over_base_pp": params.value("CAP-04"),
          "covenant_max_leverage": params.value("CAP-05"), "internal_headroom": params.value("CAP-06")},
         {"facility_id": "RCF", "facility_name": "Revolving credit facility", "original_amount": "",
-         "limit": params.value("CAP-03"), "annual_amortization_pct": "", "spread_over_base_pp": params.value("CAP-04"),
+         "facility_limit": params.value("CAP-03"), "annual_amortization_pct": "", "spread_over_base_pp": params.value("CAP-04"),
          "covenant_max_leverage": params.value("CAP-05"), "internal_headroom": params.value("CAP-06")},
     ])
