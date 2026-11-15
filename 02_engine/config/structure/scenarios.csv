@@ -1,0 +1,11 @@
+scenario_id,scenario_type,case,planning_cycle,as_of_date,actuals_through,version_status,assumption_set_id,prepared_by
+ACT,Actual,,,,2026-10-31,,,Generator
+LRP_2025,Long-range plan FY2026-FY2030,Base,LRP 2025,2025-03-31,2025-02-01,Approved,AS_LRP_2025,Generator
+BUD_FY2026,Budget,Base,FY2026 budget,2025-01-15,2024-11-02,Final,AS_BUD_FY2026,Generator
+BUD_FY2027,Budget,Base,FY2027 budget,2026-01-15,2025-11-01,Approved,AS_BUD_FY2027,Generator
+FCST_FY2027_Q1,Forecast (3 + 9),Base,FY2027 Q1 forecast,2026-05-15,2026-05-02,Superseded,AS_FCST_FY2027_Q1,Generator (as FP&A)
+FCST_FY2027_Q2,Forecast (6 + 6),Base,FY2027 Q2 forecast,2026-08-15,2026-08-01,Current,AS_FCST_FY2027_Q2,Generator (as FP&A)
+FCST_FY2027_Q3,Forecast (9 + 3),Base,FY2027 Q3 forecast,2026-11-15,2026-10-31,Deliverable,AS_FCST_FY2027_Q3,Analyst
+PLAN_FY2028_BASE,Plan,Base,FY2028 plan,2026-11-15,2026-10-31,Deliverable,AS_PLAN_FY2028_BASE,Analyst
+PLAN_FY2028_UP,Plan,Upside,FY2028 plan,2026-11-15,2026-10-31,Deliverable,AS_PLAN_FY2028_UP,Analyst
+PLAN_FY2028_DOWN,Plan,Downside,FY2028 plan,2026-11-15,2026-10-31,Deliverable,AS_PLAN_FY2028_DOWN,Analyst

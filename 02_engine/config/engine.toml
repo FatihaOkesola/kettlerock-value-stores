@@ -1,0 +1,11 @@
+# Paths are relative to the 02_engine folder.
+# The calibration files are read from 01_calibration and never copied here.
+[paths]
+calibrated_parameters = "../01_calibration/calibrated_parameters.csv"
+calibrated_vectors = "../01_calibration/calibrated_parameter_vectors.csv"
+structure_dir = "config/structure"
+output_dir = "output/csv"
+
+[calendar]
+first_fiscal_year = 2025
+last_fiscal_year = 2030

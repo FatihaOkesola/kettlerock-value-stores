@@ -1,0 +1,16 @@
+holiday_key,holiday_name,date_rule,ON,QC,NS,NB
+new_years_day,New Year's Day,fixed:01-01,closed,closed,closed,closed
+family_day,Family Day / Heritage Day,nth_weekday:02:MON:3,closed,open,closed,closed
+good_friday,Good Friday,easter:-2,closed,open,closed,closed
+easter_sunday,Easter Sunday,easter:0,closed,closed,closed,open
+victoria_day,Victoria Day,monday_before:05-25,closed,open,open,closed
+saint_jean_baptiste,Saint-Jean-Baptiste Day,fixed:06-24,open,closed,open,open
+canada_day,Canada Day,fixed:07-01,closed,closed,closed,closed
+new_brunswick_day,New Brunswick Day,nth_weekday:08:MON:1,open,open,open,closed
+labour_day,Labour Day,nth_weekday:09:MON:1,closed,closed,closed,closed
+thanksgiving_day,Thanksgiving Day,nth_weekday:10:MON:2,closed,open,closed,closed
+remembrance_day,Remembrance Day,fixed:11-11,open,open,closed,closed
+christmas_eve,Christmas Eve,fixed:12-24,reduced hours,reduced hours,reduced hours,reduced hours
+christmas_day,Christmas Day,fixed:12-25,closed,closed,closed,closed
+boxing_day,Boxing Day,fixed:12-26,open,reduced hours,closed,closed
+new_years_eve,New Year's Eve,fixed:12-31,reduced hours,reduced hours,reduced hours,reduced hours

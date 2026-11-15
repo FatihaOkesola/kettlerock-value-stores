@@ -1,0 +1,43 @@
+store_id,store_name,market_id,region,province,city,location_type,format,selling_sq_ft,open_date,status,cohort_year,lease_term_start,lease_term_end,lease_renewals_taken,remodel_reopen_date
+KVS001,Kettlerock Brampton 001,GTA-1,Greater Toronto Area,ON,Brampton,suburban,standard,9000,2009-04-18,open,2009,2024-04-18,2029-04-18,2,2024-05-18
+KVS002,Kettlerock Brampton 002,GTA-1,Greater Toronto Area,ON,Brampton,suburban,standard,9000,2013-06-08,open,2013,2023-06-08,2028-06-08,1,
+KVS003,Kettlerock Brampton 003,GTA-1,Greater Toronto Area,ON,Brampton,urban,standard,9000,2018-05-12,open,2018,2018-05-12,2028-05-12,0,
+KVS004,Kettlerock Scarborough 004,GTA-2,Greater Toronto Area,ON,Scarborough,urban,standard,9000,2009-09-12,open,2009,2024-09-12,2029-09-12,2,2024-10-12
+KVS005,Kettlerock Scarborough 005,GTA-2,Greater Toronto Area,ON,Scarborough,urban,standard,9000,2012-10-13,open,2012,2022-10-13,2027-10-13,1,
+KVS006,Kettlerock Scarborough 006,GTA-2,Greater Toronto Area,ON,Scarborough,suburban,standard,9000,2022-03-19,open,2022,2022-03-19,2032-03-19,0,
+KVS007,Kettlerock Mississauga 007,GTA-3,Greater Toronto Area,ON,Mississauga,suburban,standard,9000,2010-08-21,open,2010,2025-08-21,2030-08-21,2,2025-09-20
+KVS008,Kettlerock Mississauga 008,GTA-3,Greater Toronto Area,ON,Mississauga,suburban,standard,9000,2017-04-08,open,2017,2017-04-08,2027-04-08,0,
+KVS009,Kettlerock Mississauga 009,GTA-3,Greater Toronto Area,ON,Mississauga,urban,standard,9000,2022-09-17,open,2022,2022-09-17,2032-09-17,0,
+KVS010,Kettlerock Oshawa 010,GTA-4,Greater Toronto Area,ON,Oshawa,suburban,standard,9000,2014-05-10,open,2014,2024-05-10,2029-05-10,1,2024-06-08
+KVS011,Kettlerock Oshawa 011,GTA-4,Greater Toronto Area,ON,Oshawa,suburban,standard,9000,2019-08-24,open,2019,2019-08-24,2029-08-24,0,
+KVS012,Kettlerock Oshawa 012,GTA-4,Greater Toronto Area,ON,Oshawa,urban,standard,9000,2024-04-13,open,2024,2024-04-13,2034-04-13,0,
+KVS013,Kettlerock Vaughan 013,GTA-5,Greater Toronto Area,ON,Vaughan,suburban,standard,9000,2023-05-13,open,2023,2023-05-13,2033-05-13,0,
+KVS014,Kettlerock Vaughan 014,GTA-5,Greater Toronto Area,ON,Vaughan,suburban,standard,9000,2025-09-13,open,2025,2025-09-13,2035-09-13,0,
+KVS015,Kettlerock London 015,SWO-1,Southwestern Ontario,ON,London,suburban,standard,9000,2009-11-07,open,2009,2024-11-07,2029-11-07,2,2024-12-07
+KVS016,Kettlerock London 016,SWO-1,Southwestern Ontario,ON,London,urban,standard,9000,2016-09-17,open,2016,2026-09-17,2031-09-17,1,2026-10-17
+KVS017,Kettlerock Kitchener 017,SWO-2,Southwestern Ontario,ON,Kitchener,suburban,standard,9000,2011-05-14,open,2011,2026-05-14,2031-05-14,2,2026-06-13
+KVS018,Kettlerock Kitchener 018,SWO-2,Southwestern Ontario,ON,Kitchener,urban,standard,9000,2018-09-08,open,2018,2018-09-08,2028-09-08,0,
+KVS019,Kettlerock Hamilton 019,SWO-3,Southwestern Ontario,ON,Hamilton,urban,standard,9000,2012-04-21,open,2012,2022-04-21,2027-04-21,1,
+KVS020,Kettlerock Hamilton 020,SWO-3,Southwestern Ontario,ON,Hamilton,suburban,standard,9000,2020-10-17,open,2020,2020-10-17,2030-10-17,0,
+KVS021,Kettlerock Windsor 021,SWO-4,Southwestern Ontario,ON,Windsor,suburban,standard,9000,2017-10-14,open,2017,2017-10-14,2027-10-14,0,
+KVS022,Kettlerock Windsor 022,SWO-4,Southwestern Ontario,ON,Windsor,suburban,standard,9000,2023-03-18,open,2023,2023-03-18,2033-03-18,0,
+KVS023,Kettlerock Woodstock 023,SWO-5,Southwestern Ontario,ON,Woodstock,small town,standard,9000,2018-11-10,open,2018,2018-11-10,2028-11-10,0,
+KVS024,Kettlerock Stratford 024,SWO-6,Southwestern Ontario,ON,Stratford,small town,standard,9000,2022-04-23,open,2022,2022-04-23,2032-04-23,0,
+KVS025,Kettlerock Sarnia 025,SWO-7,Southwestern Ontario,ON,Sarnia,small town,standard,9000,2023-09-16,open,2023,2023-09-16,2033-09-16,0,
+KVS026,Kettlerock Chatham 026,SWO-8,Southwestern Ontario,ON,Chatham,small town,standard,9000,2024-08-17,open,2024,2024-08-17,2034-08-17,0,
+KVS027,Kettlerock Laval 027,MTL-1,Montreal area,QC,Laval,suburban,standard,9000,2015-05-09,open,2015,2025-05-09,2030-05-09,1,2025-06-07
+KVS028,Kettlerock Laval 028,MTL-1,Montreal area,QC,Laval,suburban,standard,9000,2019-04-13,open,2019,2019-04-13,2029-04-13,0,
+KVS029,Kettlerock Laval 029,MTL-1,Montreal area,QC,Laval,urban,standard,9000,2024-05-11,open,2024,2024-05-11,2034-05-11,0,
+KVS030,Kettlerock Montreal 030,MTL-2,Montreal area,QC,Montreal,urban,standard,9000,2013-09-14,open,2013,2023-09-14,2028-09-14,1,
+KVS031,Kettlerock Montreal 031,MTL-2,Montreal area,QC,Montreal,urban,standard,9000,2021-08-21,open,2021,2021-08-21,2031-08-21,0,
+KVS032,Kettlerock Longueuil 032,MTL-3,Montreal area,QC,Longueuil,suburban,standard,9000,2016-04-16,open,2016,2026-04-16,2031-04-16,1,2026-05-16
+KVS033,Kettlerock Longueuil 033,MTL-3,Montreal area,QC,Longueuil,suburban,standard,9000,2023-10-21,open,2023,2023-10-21,2033-10-21,0,
+KVS034,Kettlerock Terrebonne 034,MTL-4,Montreal area,QC,Terrebonne,suburban,standard,9000,2022-11-12,open,2022,2022-11-12,2032-11-12,0,
+KVS035,Kettlerock Terrebonne 035,MTL-4,Montreal area,QC,Terrebonne,suburban,standard,9000,2025-10-18,open,2025,2025-10-18,2035-10-18,0,
+KVS036,Kettlerock Halifax 036,ATL-1,Atlantic Canada,NS,Halifax,urban,compact,6000,2024-10-19,open,2024,2024-10-19,2034-10-19,0,
+KVS037,Kettlerock Halifax 037,ATL-1,Atlantic Canada,NS,Halifax,suburban,compact,6000,2026-05-09,open,2026,2026-05-09,2036-05-09,0,
+KVS038,Kettlerock Moncton 038,ATL-2,Atlantic Canada,NB,Moncton,small town,compact,6000,2025-06-14,open,2025,2025-06-14,2035-06-14,0,
+KVS039,Kettlerock Fredericton 039,ATL-3,Atlantic Canada,NB,Fredericton,small town,compact,6000,2026-07-11,open,2026,2026-07-11,2036-07-11,0,
+KVS040,Kettlerock Truro 040,ATL-4,Atlantic Canada,NS,Truro,small town,compact,6000,2026-09-19,open,2026,2026-09-19,2036-09-19,0,
+KVS041,Kettlerock Vaughan 041,GTA-5,Greater Toronto Area,ON,Vaughan,urban,standard,9000,2026-11-21,planned,2026,2026-11-21,2036-11-21,0,
+KVS042,Kettlerock Markham 042,GTA-6,Greater Toronto Area,ON,Markham,suburban,standard,9000,2027-01-16,planned,2027,2027-01-16,2037-01-16,0,
