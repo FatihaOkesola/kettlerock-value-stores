@@ -12,6 +12,9 @@ class Config:
     calibrated_vectors: Path
     structure_dir: Path
     output_dir: Path
+    specification: Path
+    sealed_dir: Path
+    commitment_dir: Path
     first_fiscal_year: int
     last_fiscal_year: int
 
@@ -26,6 +29,9 @@ def load_config(path: Path | None = None) -> Config:
         calibrated_vectors=(ENGINE_ROOT / p["calibrated_vectors"]).resolve(),
         structure_dir=(ENGINE_ROOT / p["structure_dir"]).resolve(),
         output_dir=(ENGINE_ROOT / p["output_dir"]).resolve(),
+        specification=(ENGINE_ROOT / p["specification"]).resolve(),
+        sealed_dir=(ENGINE_ROOT / p["sealed_dir"]).resolve(),
+        commitment_dir=(ENGINE_ROOT / p["commitment_dir"]).resolve(),
         first_fiscal_year=raw["calendar"]["first_fiscal_year"],
         last_fiscal_year=raw["calendar"]["last_fiscal_year"],
     )
