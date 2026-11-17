@@ -10,6 +10,7 @@ The engine builds Kettlerock's synthetic data from the calibrated parameters in 
 | `tools/` | Scripts that produced the structure files; re-running them reproduces the files byte for byte |
 | `schemas/` | PostgreSQL table definitions and the `COPY` loader |
 | `tests/` | Automated checks against the specification and the calibrated parameters |
+| `commitment/` | The published seal: `commitment_manifest.csv` and the `commitments.csv` ledger |
 
 ## Running it
 
@@ -22,3 +23,16 @@ python -m pytest
 ```
 
 The build writes canonical CSV files and `manifest.csv` (each file's SHA-256 hash and row count) to `output/csv`. These files are the single source of truth; PostgreSQL is loaded from them with `schemas/load_structure.sql`, and the loaded row counts are checked against the manifest.
+
+## The sealed world
+
+Some drivers of the history are hidden from the analyst until the planning season ends. Their ranges and rules are public in `calibrated_parameters.csv`; the values actually used are drawn once from a private 256-bit seed and frozen in `sealed/sealed_world.csv`.
+
+```
+python -m kettlerock_engine.seal --commit <40-character GitHub commit SHA>
+python -m kettlerock_engine.seal --verify
+```
+
+Sealing runs after the final GitHub commit of the calibration, specification and engine, and records that commit. `commitment/commitment_manifest.csv` publishes separate SHA-256 hashes of the exact bytes of the seed and the sealed file, with the commit, the engine version and the hashes of the calibration files and specification. The sealed file is canonical: UTF-8, rows sorted by key, numbers at ten decimal places, `\n` line endings and no timestamps.
+
+History is built only when the private files match the published hashes and the seed reproduces the sealed file exactly under the current inputs. Later edits to the specification or calibration files are reported but allowed, because the redraw check fails if any of them would change a sealed value. A seal is never overwritten: a correction adds a new commitment to `commitments.csv` with the reason the earlier one was replaced. No public output contains a sealed parameter ID or value (`tests/test_leak.py`). After the season, the seed and sealed file are released so anyone can recompute the hashes and regenerate the world.
