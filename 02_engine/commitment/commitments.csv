@@ -1,0 +1,2 @@
+commitment_version,sealed_on,git_commit,engine_version,seed_sha256,sealed_world_sha256,status,replaced_reason
+1,2026-11-16,5fd8802a6209d4db172dc4b8be5652ba130f3b74,0.2.0,e16b94e31a754caa049294beeaf89b5fb1c1c24bd2440b8cc9c3ef739226799f,9d1c492c232cb958e6e99003c823818aecc44b1841694c4f0ffc945e2d5d67f0,active,
