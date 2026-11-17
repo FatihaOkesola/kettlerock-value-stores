@@ -1,6 +1,6 @@
 # Kettlerock Value Stores: Design Specification
 
-**Author:** Fatiha Abisola Okesola · **Version:** 3.1 · **Last updated:** 2026-11-14
+**Author:** Fatiha Abisola Okesola · **Version:** 3.2 · **Last updated:** 2026-11-14
 
 > A fictional Canadian value retailer, generated from synthetic data calibrated to public retail benchmarks and the M5 dataset, for one FY2028 planning season told in seven chapters across FP&A and strategic finance.
 
@@ -312,6 +312,8 @@ Real historical macro data drives the actual period; every plan uses forward ass
 - Historical data is never presented as if it were known before it happened: the FY2027 budget uses the January 2026 outlook, not rates realized later.
 - Every observed series has a row in the benchmark source register (section 21), referenced from the data dictionary by source\_id.
 
+**Affordability and trade-down:** low-income affordability pressure is a public driver derived from real data: the 12-month change in provincial all-items CPI minus the 12-month change in the provincial general minimum wage. Minimum wage growth stands in for the pay of Kettlerock's lower-income customers, not for overall household income. How strongly transactions respond to that pressure is a sealed coefficient (MAC-10). Interest rates affect interest expense directly and customer demand only through this channel. Elections, recessions and other external shocks are never invented in the actual period; they are tested as forward scenarios in the FY2028 plan.
+
 ## 12. Basket model and price response
 
 One daily basket-generation process per store produces transactions, items, category mix, prices, discounts and net sales together, so they reconcile by construction. It generates daily aggregate transactions and basket characteristics, not individual baskets.
@@ -362,14 +364,22 @@ The generator draws a few events per seed from an authored menu and records them
 
 | Event | Scope rule | Effect | Recovery |
 | --- | --- | --- | --- |
-| Competitor opening | Pick one `market_id` at random; affects every store in it | Transactions fall by an authored range | Recovers over 6–12 months |
-| Local demand shock | One store or one market | Transactions up or down by an authored range | Authored duration |
+| Competitor opening | Pick one `market_id` at random; affects every store in it | Transactions fall by an authored range | Declines in a straight line over 6–12 months to a permanent loss of half the initial size (a 10% loss ends at 5%) |
+| Local demand shock | One store or one market | Transactions up or down by an authored range | 8–26 weeks, easing back in a straight line over the final 4 weeks |
 | Seasonal sell-through miss | One seasonal window, all stores | Lower seasonal units; higher markdowns and write-downs | Ends with the window |
-| Supplier cost increase | One department | Higher supplier cost from an effective date, written to fact\_cost\_history | Persistent |
-| Freight cost spike | Imported goods (the exchange rate follows real history and is never an event) | Higher landed cost for a period | Authored duration |
-| Store disruption | One store | Closed or reduced trading for days to weeks | Ends on reopening |
+| Supplier cost increase | One department | Higher supplier cost from an effective date, written to fact\_cost\_history | Permanent |
+| Freight cost spike | Imported goods (the exchange rate follows real history and is never an event) | Higher landed cost for a period | 8–20 weeks, then back to normal |
+| Store disruption | One store | Closed for 3–30 days | Ends on reopening |
 
 **Sealed log fields:** event ID, type, start date, end date, affected stores or categories, magnitude, recovery profile.
+
+**Event rules:**
+
+- **Number and types:** 4–6 events per seed. Every seed has one competitor opening and one supplier cost increase; the remaining events take types drawn without replacement from the other four.
+- **Timing:** events start on a Sunday (a seasonal sell-through miss starts with its seasonal window) between the start of FY2025 and eight weeks before the Q3 FY2027 close, with at least one starting in each of FY2025, FY2026 and FY2027. An event may still be running at the Q3 close.
+- **Severe events:** competitor opening, supplier cost increase, freight cost spike and seasonal sell-through miss. Only one severe event occupies the calendar at a time. A competitor opening occupies its recovery period, a freight spike its duration, a seasonal miss its window, and a supplier cost increase its first 13 weeks: the cost change is permanent, but a later severe event may start after week 13.
+- **Spacing:** no store carries two store- or market-level events at once; no two events in the same market within 12 months; at most two events start in any fiscal quarter. Company-wide events have no market but count toward the quarterly and occupancy limits.
+- **Validation:** candidate schedules are drawn from the advancing seeded random stream and rejected if they break a rule; the draw fails after 10,000 rejected candidates, so every valid result is reproducible from the seed.
 
 The event menu, ranges and timing rules are authored; the draw is random. Results are presented as a diagnostic exercise, not independent discovery.
 
@@ -396,7 +406,7 @@ Two stores of numbers are kept apart: what management believed when planning (vi
 
 - Visible structural parameters: ramp curve, price point list, cost structure, calendar, store attributes.
 - Sealed until analysis ends: the random draws for each seed, the price response values actually used, and the events log.
-- **Seed commitment:** the generator seed and the sealed file stay private during the season. At the start, a SHA-256 hash of the exact canonical bytes of each file (not of their parsed contents) is published in the README. After the analysis, both files are released, so anyone can recompute the hashes and regenerate the world.
+- **Seed commitment:** a 256-bit random seed is generated outside the repository and drives every sealed draw. The seed and the sealed file stay private during the season. Before any trading history is built, a commitment manifest is published with a separate SHA-256 hash of the exact canonical bytes of each file, the Git commit of the calibration and specification they were drawn from, and the engine version. Canonical bytes are UTF-8, rows sorted by parameter ID, values at a fixed number of decimal places, `\n` line endings and no timestamps. The engine builds history only when the seed and sealed file match their published hashes and the seed reproduces the sealed file exactly under the current inputs; no public output contains a sealed parameter ID or sealed value. A sealed file is never overwritten: a correction adds a new commitment to `commitments.csv`, with the reason the earlier one was replaced. After the analysis, both files are released, so anyone can recompute the hashes and regenerate the world.
 
 ## 16. Lineage and data dictionary
 
@@ -626,7 +636,7 @@ One repository holds the company, the engine and a folder per chapter of the pla
 
 ```
 kettlerock-value-stores/
-├── README.md                          (framing, disclosure, storyline, seed commitment)
+├── README.md                          (framing, disclosure, storyline)
 ├── 00_company/                        (this specification)
 ├── 01_calibration/                    (Stage 1: how retail behaves)
 │   ├── benchmark_sources.csv          (one row per external figure or series; columns in section 21)
@@ -639,6 +649,7 @@ kettlerock-value-stores/
 │   ├── tests/                         (pytest)
 │   ├── notebooks/engine_walkthrough.ipynb
 │   ├── schemas/                       (PostgreSQL schema and COPY loader)
+│   ├── commitment/                    (seal commitment manifest and commitments ledger; public)
 │   ├── config/                        (points to 01_calibration; never copies it)
 │   └── data/                          (published Parquet files and manifest)
 ├── 03_ch0_where_we_stand/             (FP&A)
@@ -650,7 +661,7 @@ kettlerock-value-stores/
 └── 09_ch6_value_creation/             (strategic finance for the owner)
 ```
 
-**Data outputs.** The engine writes canonical CSV files and a manifest (file, SHA-256 hash, row count). PostgreSQL is loaded from those exact files with `COPY` and checked against them; it is a loaded copy, not a separate source. The visible tables are published in `02_engine/data/` as Parquet derivatives with their own manifest hashes, after their size is measured. The canonical CSVs and the `sealed/` folder (seed, sealed world parameters, events log) are kept out of the repository; the sealed files are released after the season (section 15).
+**Data outputs.** The engine writes canonical CSV files and a manifest (file, SHA-256 hash, row count). PostgreSQL is loaded from those exact files with `COPY` and checked against them; it is a loaded copy, not a separate source. The visible tables are published in `02_engine/data/` as Parquet derivatives with their own manifest hashes, after their size is measured. The canonical CSVs and the `sealed/` folder (the seed and the sealed world file, which holds the sealed parameter draws and the events log) are kept out of the repository; the sealed files are released after the season (section 15).
 
 **Stable identifiers.** Store, product, category and fiscal-period identifiers are fixed in the structure step and never change between regenerations or depend on random draws. Event identifiers are stable for a given seed and live in the sealed log.
 
