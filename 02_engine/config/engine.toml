@@ -5,6 +5,11 @@ calibrated_parameters = "../01_calibration/calibrated_parameters.csv"
 calibrated_vectors = "../01_calibration/calibrated_parameter_vectors.csv"
 structure_dir = "config/structure"
 output_dir = "output/csv"
+specification = "../00_company/kettlerock_design_specification.md"
+# Private until the season ends; never uploaded
+sealed_dir = "sealed"
+# Public: the commitment manifest and the commitments ledger
+commitment_dir = "commitment"
 
 [calendar]
 first_fiscal_year = 2025
