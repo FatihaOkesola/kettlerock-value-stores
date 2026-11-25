@@ -3,6 +3,7 @@
 [paths]
 calibrated_parameters = "../01_calibration/calibrated_parameters.csv"
 calibrated_vectors = "../01_calibration/calibrated_parameter_vectors.csv"
+calibration_sources = "../01_calibration/sources"
 structure_dir = "config/structure"
 output_dir = "output/csv"
 specification = "../00_company/kettlerock_design_specification.md"
@@ -14,3 +15,8 @@ commitment_dir = "commitment"
 [calendar]
 first_fiscal_year = 2025
 last_fiscal_year = 2030
+
+[history]
+# Actuals run from the start of the first fiscal year to the close of this fiscal quarter
+last_fiscal_year = 2027
+last_fiscal_quarter = 3
