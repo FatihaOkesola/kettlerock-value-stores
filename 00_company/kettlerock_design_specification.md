@@ -1,6 +1,6 @@
 # Kettlerock Value Stores: Design Specification
 
-**Author:** Fatiha Abisola Okesola · **Version:** 3.2 · **Last updated:** 2026-11-14
+**Author:** Fatiha Abisola Okesola · **Version:** 3.3 · **Last updated:** 2026-11-14
 
 > A fictional Canadian value retailer, generated from synthetic data calibrated to public retail benchmarks and the M5 dataset, for one FY2028 planning season told in seven chapters across FP&A and strategic finance.
 
@@ -58,7 +58,7 @@ These definitions are fixed; every table, analysis and write-up uses them.
 | Items per basket | Items ÷ transactions, derived from integer counts. |
 | Average ticket | Net sales ÷ transactions. |
 | Net sales | Gross sales − promotional discounts − markdowns − returns, excluding sales taxes. |
-| Comparable store | A store open at least 13 full fiscal months; excluded for any period it was closed more than two weeks for a remodel. |
+| Comparable store | Assessed by fiscal month: a store is comparable in a month if it has been open at least 13 full fiscal months before it, and neither that month nor the same month a year earlier includes any part of a closure longer than 14 consecutive days, for any reason. Only the affected months are excluded; quarter and year comparable growth sum comparable store-months. |
 | Comparable sales growth | Net sales growth of comparable stores against the same fiscal period last year. |
 | Cohort | The fiscal year a store opened. |
 | Market | A trade area of 1–3 stores (`market_id`), used for local events such as competitor openings. |
@@ -446,7 +446,7 @@ The first release has 9 dimension tables, 13 fact tables and 4 reference or seal
 
 | Table | One row per | Key contents |
 | --- | --- | --- |
-| `fact_traffic_day` | Store × day | Integer transactions, items, items per basket; return-only visits excluded |
+| `fact_traffic_day` | Store × day, every day from the store's opening (or the start of FY2025) to the Q3 FY2027 close, closed days included | Trading status (open, reduced hours, holiday closure, remodel closure, unplanned closure); integer transactions, zero on closed days; items and items per basket (added with category sales); return-only visits excluded |
 | `fact_sales_category_day` | Store × category × day | Integer units sold and returned, gross sales, discounts, markdowns, returns value, net sales, COGS components, gross margin |
 | `fact_sales_item_week` | Store × item × week | Integer units, net sales, average selling price, COGS; sums to category-week |
 | `fact_price_change` | Item × effective date | Old and new price point, scope (all stores or listed stores) |
@@ -493,7 +493,13 @@ The generator runs traffic first and rolls everything up from it, then builds ea
 
 1. **Structure:** calendar, holidays, markets, stores and opening timeline, products, cost history, accounts, debt facilities.
 2. **World:** load structural parameters; draw seeded parameters and hidden events; seal them.
-3. **Traffic:** integer daily transactions per store = mature base × store level factor × ramp-up × day-of-week shape × seasonality × holiday effect (authored mapping) × trading status (0 on closed days; an authored share on reduced-hours days; an authored share of a closed day's demand recaptured on the neighbouring open days; on a day next to a closure, only the larger of the pre-holiday sales increment and the recaptured sales increment is applied) × persistent drift × event effects × qualifying category-wide price effect × noise.
+3. **Traffic:** one row per store per day from opening to the Q3 FY2027 close, closed days included.
+    - **Underlying demand:** mature base (705 a day, the underlying FY2026 level of a mature standard store) × format × store strength × ramp-up (linear by calendar days: 0.60 at opening, 0.80 at one year, 0.90 at two, 1.00 at three) × underlying growth × day-of-week shape × monthly seasonality (by calendar month, applied to transactions) × trade-down (1 + response × affordability pressure ÷ 100) × remodel lift × event effects. The qualifying category-wide price effect is 1 throughout the history, because price points did not change.
+    - **Closures without recapture:** a remodel closes the store for the 7 days before reopening, and an unplanned disruption closes it for its duration; both carry zero transactions and no recapture.
+    - **Holiday mechanics:** holiday closures carry zero; reduced-hours days an authored share; an authored share of a closed day's demand is recaptured on the neighbouring open days; the open day before a closure carries the pre-holiday lift; on any day only the larger of the pre-holiday increment and the recaptured increment is applied.
+    - **Month neutrality:** each store-month is rescaled so the holiday mechanics move expected demand between days but never change the month's expected total, because the monthly seasonality already contains holiday shopping and closures.
+    - **Noise:** weekly store drift (first-order autoregressive on the log level), then an integer Poisson count around the day's expected value. Drift settings are calibrated by simulation so that a calendar-adjusted noise measure of the final transactions meets the store-total targets from M5.
+    - **Published:** date, store, trading status and transactions only.
 4. **Item demand:** baseline expected units per item per store-day, then each item's price-response multiplier (section 12).
 5. **Category units and sales:** sum expected item units by category, draw integer category units, derive category mix and items per basket, then gross sales, discounts, markdowns, returns and net sales.
 6. **Items:** weekly multinomial allocation of integer category-week units across items by price-adjusted expected units; seasonal items only in their window.
@@ -554,7 +560,8 @@ M5 records unit sales, not transactions, so it informs only descriptive sales ac
 | Day-of-week sales pattern | M5 | Unit-sales shape by day of week; applied to transactions through an authored neutral bridge (weekend basket multiplier 1.00 in the base world, tested in scenarios) |
 | Seasonality shape by category | M5 | Category seasonality |
 | Sales variation between stores | M5 | Store level factor range |
-| Week-to-week volatility and persistence | M5 | Drift and noise settings |
+| Week-to-week volatility and persistence | M5 | Category noise and persistence (store-category units) |
+| Store-total weekly noise and persistence | M5 (unit proxy) | Store traffic drift; validated on calendar-adjusted Kettlerock transactions |
 | Item-level intermittent demand and concentration | M5 | Item baseline shares |
 | Holiday-period sales patterns | M5 (descriptive only) | Descriptive holiday-seasonality evidence, mapped to Kettlerock's Canadian calendar through an authored relationship; holiday lift sizes are authored |
 | Comparable sales and transaction/ticket ranges | Public filings of discount retailers | Transaction and ticket levels and growth ranges; the transactions versus ticket split of sales growth is an authored relationship |
