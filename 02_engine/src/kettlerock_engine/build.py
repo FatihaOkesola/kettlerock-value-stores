@@ -1,6 +1,8 @@
 """Command-line entry point: python -m kettlerock_engine.build
 
-Milestone 1 builds the structure tables and writes them as canonical CSVs with a manifest.
+Builds the structure tables (Milestone 1) and, once the world is sealed and the seal
+verifies, the trading history (Milestone 3 onward). Every table is written as a canonical
+CSV with its hash and row count in manifest.csv.
 """
 from .config import load_config
 from .params import Params
@@ -26,9 +28,26 @@ def build_structure(cfg=None):
     }
 
 
+def build_history(cfg, params, tables) -> dict:
+    """Trading history. Refuses to run unless the seal verifies (Milestone 2)."""
+    from .seal import verify_seal, SEED_FILE, SEALED_FILE
+    from .traffic import build_traffic
+    m = verify_seal(cfg)
+    seed_hex = (cfg.sealed_dir / SEED_FILE).read_text(encoding="ascii").strip()
+    sealed_bytes = (cfg.sealed_dir / SEALED_FILE).read_bytes()
+    for w in m["warnings"]:
+        print(f"Note: {w}.")
+    return {"fact_traffic_day": build_traffic(cfg, params, tables, seed_hex, sealed_bytes)}
+
+
 def main():
     cfg = load_config()
     tables = build_structure(cfg)
+    params = Params(cfg.calibrated_parameters, cfg.calibrated_vectors)
+    try:
+        tables.update(build_history(cfg, params, tables))
+    except FileNotFoundError:
+        print("Not sealed yet: built the structure tables only.")
     entries = [write_table(df, name, cfg.output_dir) for name, df in tables.items()]
     manifest = write_manifest(entries, cfg.output_dir)
     for e in entries:
