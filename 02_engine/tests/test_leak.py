@@ -23,10 +23,10 @@ def _public_files(cfg):
             yield from (p for p in folder.rglob("*") if p.is_file())
 
 
-def test_loader_reads_only_canonical_csvs():
-    sql = (ENGINE_ROOT / "schemas" / "load_structure.sql").read_text(encoding="utf-8")
-    sources = re.findall(r"FROM '([^']+)'", sql)
-    assert sources and all(s.startswith("output/csv/") for s in sources)
+def test_loaders_read_only_canonical_csvs():
+    for loader in (ENGINE_ROOT / "schemas").glob("load_*.sql"):
+        sources = re.findall(r"FROM '([^']+)'", loader.read_text(encoding="utf-8"))
+        assert sources and all(s.startswith("output/csv/") for s in sources), loader.name
 
 
 def test_public_outputs_hold_no_sealed_values(cfg):
