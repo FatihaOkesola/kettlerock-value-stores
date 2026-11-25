@@ -22,7 +22,7 @@ python -m kettlerock_engine.build
 python -m pytest
 ```
 
-The build writes canonical CSV files and `manifest.csv` (each file's SHA-256 hash and row count) to `output/csv`. These files are the single source of truth; PostgreSQL is loaded from them with `schemas/load_structure.sql`, and the loaded row counts are checked against the manifest.
+The build writes canonical CSV files and `manifest.csv` (each file's SHA-256 hash and row count) to `output/csv`. It always builds the structure tables; the trading history (`fact_traffic_day` and later tables) is built only when the seal described below verifies. These files are the single source of truth; PostgreSQL tables are created with `schemas/001_structure.sql` and `schemas/002_history.sql` and loaded with `schemas/load_structure.sql` and `schemas/load_history.sql`, and the loaded row counts are checked against the manifest.
 
 ## The sealed world
 
